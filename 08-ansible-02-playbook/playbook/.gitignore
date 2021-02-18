@@ -1,1 +1,3 @@
 files/*
+!files/ansible.cfg
+private_keys/*

@@ -1,0 +1,4 @@
+---
+  logstash_version: "7.11.0"
+  logstash_home: "/opt/logstash/{{ logstash_version }}"
+  logstash_archive_path: "/tmp/kibana-{{ logstash_version }}-linux-x86_64.tar.gz"

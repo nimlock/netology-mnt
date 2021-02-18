@@ -1,3 +1,4 @@
 ---
-  java_jdk_version: 8u271
-  java_oracle_jdk_package: jdk-8u271-linux-x64.tar.gz
+  java_jdk_version: "11.0.10"
+  java_oracle_jdk_package: "jdk-{{ java_jdk_version }}_linux-x64_bin.tar.gz"
+  elastic_port: "9200"

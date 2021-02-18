@@ -1,0 +1,12 @@
+# Warning: This file is Ansible Managed, manual changes may be overwritten on playbook run.
+---
+{% for node in result_inventory_dict %}
+{% for group in result_inventory_dict[node]['groups'] %}
+  {{ group }}:
+    hosts:
+      {{ result_inventory_dict[node]['hostname'] }}:
+        ansible_host: {{ result_inventory_dict[node]['ansible_host'] }}
+        ansible_ssh_private_key_file: {{ result_inventory_dict[node]['ansible_ssh_private_key_file'] }}
+        ansible_user: {{ result_inventory_dict[node]['ansible_user'] }}
+{% endfor %}
+{% endfor %}

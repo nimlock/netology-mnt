@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+
+	config.vm.box = "{{ services_infra[nodename]['box'] }}"
+	config.vm.hostname = "{{ services_infra[nodename]['hostname'] }}"
+	config.vm.synced_folder ".", "/vagrant", disabled: true
+	config.vm.network "{{ services_infra[nodename]['network_type'] }}", bridge: "{{ services_infra[nodename]['bridge_name'] }}"
+	config.vm.provider "hyperv" do |h|
+		h.cpus = "{{ services_infra[nodename]['cpus'] }}"
+		h.memory = "{{ services_infra[nodename]['memory'] }}"
+		h.linked_clone = true
+		h.vmname = "{{ services_infra[nodename]['vmname'] }}"
+		h.vm_integration_services = {
+			guest_service_interface: true,
+			heartbeat: true,
+			shutdown: true,
+			time_synchronization: true
+		}
+	end
+end

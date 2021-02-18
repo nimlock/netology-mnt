@@ -1,0 +1,5 @@
+input { stdin { } }
+output {
+  elasticsearch { hosts => ["{{ hostvars[groups.elasticsearch[0]].ansible_host }}:{{ elastic_port }}"] }
+  stdout { codec => rubydebug }
+}

@@ -1,0 +1,34 @@
+---
+  defautl_values:
+    "box": "bento/ubuntu-20.04"
+    "cpus": "2"
+    "memory": "1024"
+    "network_type": "public_network"
+    "bridge_name": "Default Switch"
+    "remote_user": "vagrant"
+  services_infra:
+    "node01":
+      "box": "{{ defautl_values['box'] }}"
+      "vmname": "vm-node01"
+      "hostname": "vm-node01"
+      "cpus": "{{ defautl_values['cpus'] }}"
+      "memory": "{{ defautl_values['memory'] }}"
+      "network_type": "{{ defautl_values['network_type'] }}"
+      "bridge_name": "{{ defautl_values['bridge_name'] }}"
+      "remote_user": "{{ defautl_values['remote_user'] }}"
+      "ansible_groups":
+        - "elasticsearch"
+        - "kibana"
+    "node02":
+      "box": "{{ defautl_values['box'] }}"
+      "vmname": "vm-node02"
+      "hostname": "vm-node02"
+      "cpus": "{{ defautl_values['cpus'] }}"
+      "memory": "{{ defautl_values['memory'] }}"
+      "network_type": "{{ defautl_values['network_type'] }}"
+      "bridge_name": "{{ defautl_values['bridge_name'] }}"
+      "remote_user": "{{ defautl_values['remote_user'] }}"
+      "ansible_groups":
+        - "logstash"
+
+  project_folder: "C:\\08-ansible-02-playbook"
