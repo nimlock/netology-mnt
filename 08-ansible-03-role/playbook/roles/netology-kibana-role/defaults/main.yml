@@ -1,0 +1,7 @@
+---
+# defaults file for netology-kibana-role
+  kibana_version: "7.11.0"
+  kibana_home: "/opt/kibana/{{ kibana_version }}"
+  kibana_port: "5601"
+  kibana_bind_address: "0.0.0.0"
+  elastic_url_in_kibana: "http://localhost:{{ elastic_port | default('9200') }}"

@@ -1,0 +1,43 @@
+---
+  - name: Prepare infrastructure
+    hosts: hypervisors
+    gather_facts: no
+    tags: init
+    tasks:
+      - name: Get VM for services
+        include_tasks: init.yml
+        loop: "{{ services_infra.keys() }}"
+        loop_control:
+          loop_var: nodename
+      - name: Write inventory from template
+        ansible.builtin.template: 
+          src: inventory.prod.yml.j2
+          dest: "{{ playbook_dir }}/inventory/prod.yml"
+          mode: '0644'
+        delegate_to: 127.0.0.1
+  - name: Check connetions to servers
+    hosts: all:!hypervisors
+    tags: init
+    tasks:
+      - name: Ping to servers
+        ping:
+  - name: Install Java
+    hosts: all:!hypervisors
+    tags: java
+    roles:
+      - java
+  - name: Install Elasticsearch
+    hosts: elasticsearch
+    tags: elastic
+    roles:
+      - netology-elastic-role
+  - name: Install Kibana
+    hosts: kibana
+    tags: kibana
+    roles:
+      - netology-kibana-role
+  - name: Install Logstash
+    hosts: logstash
+    tags: logstash
+    roles:
+      - netology-logstash-role

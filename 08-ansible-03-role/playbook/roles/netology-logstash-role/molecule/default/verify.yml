@@ -1,0 +1,10 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Check Logstash version
+    command: "{{ logstash_home }}/bin/logstash --version"
+    changed_when: false

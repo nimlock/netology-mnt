@@ -1,0 +1,3 @@
+---
+# vars file for roles
+  elastic_archive_path: "/tmp/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"

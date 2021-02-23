@@ -1,0 +1,5 @@
+---
+  elastic_version: "7.11.0"
+  elastic_home: "/opt/elastic/{{ elastic_version }}"
+  elastic_archive_path: "/tmp/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+  elastic_bind_address: "0.0.0.0"

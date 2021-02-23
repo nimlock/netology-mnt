@@ -1,0 +1,79 @@
+---
+  - name: Create project folder
+    ansible.windows.win_file:
+      path: "{{ project_folder }}\\{{ nodename }}"
+      state: "directory"
+
+  - name: Create Vagrantfiles in separate subfolders
+    ansible.windows.win_template:
+      src: "Vagrantfile.j2"
+      dest: "{{ project_folder }}\\{{ nodename }}\\Vagrantfile"
+
+  - name: Check Vagrant status of {{ nodename }}
+    ansible.windows.win_command: vagrant status --machine-readable
+    args:
+      chdir: "{{ project_folder }}\\{{ nodename }}"
+    register: "vagrant_status"
+  - name: Parse status of {{ nodename }}
+    set_fact:
+      "{{ nodename }}_status": "{{ vagrant_status.stdout | regex_search('^.+,state,.+$', multiline=True) | regex_replace('^.+,state,(.+?)(\\r)?$', '\\1') }}"
+
+  - name: Create VM
+    ansible.windows.win_command: vagrant up --machine-readable
+    args:
+      chdir: "{{ project_folder }}\\{{ nodename }}"
+    when: vars[nodename+'_status'] == 'not_created'
+
+  - name: Check Vagrant ip-address of {{ nodename }}
+    ansible.windows.win_command: vagrant ssh-config --machine-readable
+    args:
+      chdir: "{{ project_folder }}\\{{ nodename }}"
+    register: "vagrant_ssh_config"
+  - name: Parse ip-address of {{ nodename }}
+    set_fact:
+      "{{ nodename }}_ip_address": "{{ vagrant_ssh_config.stdout | regex_search('^.*HostName\\s*.+?\\\\n', multiline=True) | regex_replace('^.*HostName\\s*(.+?)\\\\n.*', '\\1') }}"
+
+  - name: Set facts
+    set_fact:
+      private_key:
+        remote_path: "{{ project_folder }}\\{{ nodename }}\\.vagrant\\machines\\default\\hyperv\\private_key"
+        local_path: "private_keys/{{ nodename }}_{{ vars[nodename+'_ip_address'] }}"
+
+  - name: Read {{ nodename }} private_key from vagrant
+    ansible.windows.win_shell: cat {{ private_key.remote_path }}
+    register: raw_private_key
+
+  - name: Create private_keys folder
+    ansible.builtin.file:
+      path: "./private_keys"
+      state: "directory"
+    delegate_to: 127.0.0.1
+
+  - name: Write private_key {{ nodename }}_{{ vars[nodename+'_ip_address'] }}
+    ansible.builtin.copy:
+      content: "{{ raw_private_key.stdout }}"
+      dest: "{{ private_key.local_path }}"
+      mode: '0600'
+    delegate_to: 127.0.0.1
+
+  - name: Add servers to in-memory inventory
+    add_host:
+      hostname: "{{ nodename }}_{{ vars[nodename+'_ip_address'] }}"
+      ansible_host: "{{ vars[nodename+'_ip_address'] }}"
+      ansible_user: "{{ services_infra[nodename]['remote_user'] }}"
+      ansible_ssh_private_key_file: "{{ private_key.local_path }}"
+      groups: "{{ services_infra[nodename]['ansible_groups'] }}"
+    delegate_to: 127.0.0.1
+
+  - name: Save node params in dictionary
+    set_fact:
+      current_node_dict:
+        hostname: "{{ nodename }}_{{ vars[nodename+'_ip_address'] }}"
+        ansible_host: "{{ vars[nodename+'_ip_address'] }}"
+        ansible_user: "{{ services_infra[nodename]['remote_user'] }}"
+        ansible_ssh_private_key_file: "{{ private_key.local_path }}"
+        groups: "{{ services_infra[nodename]['ansible_groups'] }}"
+
+  - name: Fill result_inventory_dict by adding current node params
+    set_fact:
+      result_inventory_dict: "{{ result_inventory_dict | default({}) | combine({nodename:current_node_dict}) }}"

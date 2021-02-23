@@ -1,0 +1,64 @@
+---
+  - name: Ensure files dir exists
+    file:
+      state: "directory"
+      path: "files"
+      mode: '0755'
+    delegate_to: 127.0.0.1
+  - name: Check state of Elasticsearch archive
+    stat:
+      path: "files/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+    register: elastic_archive_state
+    delegate_to: 127.0.0.1
+  - name: Upload tar.gz Elasticsearch from remote URL
+    get_url:
+      url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+      dest: "files/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+      mode: '0644'
+      timeout: 60
+      force: true
+    register: get_elastic
+    until: get_elastic is succeeded
+    when: not elastic_archive_state.stat.exists
+    delegate_to: 127.0.0.1
+  - name: Create directrory for Elasticsearch
+    become: yes
+    file:
+      state: directory
+      path: "{{ elastic_home }}"
+      mode: '0755'
+      owner: "{{ ansible_user | default(omit) }}"
+    tags: elastic
+  - name: Copy Elasticsearch archive to test stands
+    become: yes
+    copy:
+      src: "elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+      dest: "{{ elastic_archive_path }}"
+      mode: '0644'
+      owner: "{{ ansible_user | default(omit) }}"
+  - name: Extract Elasticsearch in the installation directory
+    become: yes
+    unarchive:
+      copy: false
+      src: "{{ elastic_archive_path }}"
+      dest: "{{ elastic_home }}"
+      owner: "{{ ansible_user | default(omit) }}"
+      extra_opts: [--strip-components=1]
+      creates: "{{ elastic_home }}/bin/elasticsearch"
+    tags:
+      - skip_ansible_lint
+      - elastic
+  - name: Set environment Elastic
+    become: yes
+    template:
+      src: templates/elk.sh.j2
+      dest: /etc/profile.d/elk.sh
+      mode: '0755'
+    tags: elastic
+  - name: Generate config for Elasticsearch
+    template:
+      src: elasticsearch.yml.j2
+      dest: "{{ elastic_home }}/config/elasticsearch.yml"
+      mode: '0644'
+      owner: "{{ ansible_user | default(omit) }}"
+    tags: elastic

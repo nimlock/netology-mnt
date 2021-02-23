@@ -3,3 +3,15 @@
     scm: git
     version: "1.0.1"
     name: java
+  - src: git@github.com:nimlock/netology-elastic-role.git
+    scm: git
+    version: "1.0.1"
+    name: netology-elastic-role
+  - src: git@github.com:nimlock/netology-kibana-role.git
+    scm: git
+    version: "1.0.1"
+    name: netology-kibana-role
+  - src: git@github.com:nimlock/netology-logstash-role.git
+    scm: git
+    version: "1.0.0"
+    name: netology-logstash-role

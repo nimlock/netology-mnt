@@ -1,0 +1,3 @@
+---
+# vars file for netology-kibana-role
+  kibana_archive_path: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"

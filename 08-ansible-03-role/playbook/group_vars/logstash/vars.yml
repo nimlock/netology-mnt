@@ -2,3 +2,4 @@
   logstash_version: "7.11.0"
   logstash_home: "/opt/logstash/{{ logstash_version }}"
   logstash_archive_path: "/tmp/logstash-{{ logstash_version }}-linux-x86_64.tar.gz"
+  elastic_host_in_logstash: "{{ hostvars[groups.elasticsearch[0]].ansible_host }}"

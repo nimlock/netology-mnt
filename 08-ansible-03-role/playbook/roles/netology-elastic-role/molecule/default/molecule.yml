@@ -1,0 +1,28 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: centos8
+    image: docker.io/pycontribs/centos:8
+    pre_build_image: true
+    memory: 1G
+  - name: centos7
+    image: docker.io/pycontribs/centos:7
+    pre_build_image: true
+    memory: 1G
+  - name: ubuntu
+    image: docker.io/pycontribs/ubuntu:latest
+    pre_build_image: true
+    memory: 1G
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        elastic_version: "7.11.0"
+        elastic_home: "/opt/elastic/{{ elastic_version }}"
+        elastic_archive_path: "/tmp/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+verifier:
+  name: ansible

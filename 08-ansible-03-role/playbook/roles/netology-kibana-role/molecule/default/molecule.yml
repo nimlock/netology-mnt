@@ -1,0 +1,31 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: centos8
+    image: docker.io/pycontribs/centos:8
+    pre_build_image: true
+    memory: 1G
+  - name: centos7
+    image: docker.io/pycontribs/centos:7
+    pre_build_image: true
+    memory: 1G
+  - name: ubuntu
+    image: docker.io/pycontribs/ubuntu:latest
+    pre_build_image: true
+    memory: 1G
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        kibana_version: "7.11.0"
+        kibana_home: "/opt/kibana/{{ kibana_version }}"
+        kibana_archive_path: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+        kibana_port: "5601"
+        kibana_bind_address: "0.0.0.0"
+        elastic_url_in_kibana: "http://localhost:{{ elastic_port | default('9200') }}"
+verifier:
+  name: ansible

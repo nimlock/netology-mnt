@@ -1,0 +1,20 @@
+# Warning: This file is Ansible Managed, manual changes may be overwritten on playbook run.
+---
+  elasticsearch:
+    hosts:
+      node01_172.23.27.168:
+        ansible_host: 172.23.27.168
+        ansible_ssh_private_key_file: private_keys/node01_172.23.27.168
+        ansible_user: vagrant
+  kibana:
+    hosts:
+      node01_172.23.27.168:
+        ansible_host: 172.23.27.168
+        ansible_ssh_private_key_file: private_keys/node01_172.23.27.168
+        ansible_user: vagrant
+  logstash:
+    hosts:
+      node02_172.23.23.32:
+        ansible_host: 172.23.23.32
+        ansible_ssh_private_key_file: private_keys/node02_172.23.23.32
+        ansible_user: vagrant

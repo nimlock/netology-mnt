@@ -1,4 +1,3 @@
 ---
-  logstash_version: "7.11.0"
-  logstash_home: "/opt/logstash/{{ logstash_version }}"
+# vars file for netology-logstash-role
   logstash_archive_path: "/tmp/logstash-{{ logstash_version }}-linux-x86_64.tar.gz"
