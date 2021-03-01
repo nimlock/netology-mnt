@@ -1,0 +1,7 @@
+---
+  - name: Test my module calling from role in my collection
+    hosts: localhost
+    gather_facts: no
+    tags: test
+    roles:
+      - nimlock.my_own_collection.single_task_role

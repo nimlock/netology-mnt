@@ -1,0 +1,14 @@
+---
+  - name: Test my module
+    hosts: localhost
+    gather_facts: no
+    tags: test
+    tasks:
+      - name: Run module
+        my_own_module:
+          path: "/tmp/my_second_test"
+          content: "Hello from playbook :)"
+        register: testout
+      - name: Debug
+        debug:
+          var: testout

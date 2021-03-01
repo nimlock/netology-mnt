@@ -1,0 +1,5 @@
+---
+  collections:
+    - name: git@github.com:nimlock/netology-my_own_collection.git
+      type: git
+      version: 1.0.0
